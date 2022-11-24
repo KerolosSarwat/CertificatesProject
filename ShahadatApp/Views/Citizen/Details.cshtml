@@ -1,0 +1,82 @@
+﻿@model ShahadatApp.Models.Citizen
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Citizen</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Area.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Area.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FullName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FullName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Phone)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Phone)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.WhatsAppUser)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.WhatsAppUser)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Milad)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Milad)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Mosalsal)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Mosalsal)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IDImage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IDImage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PersonalPhoto)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PersonalPhoto)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Kawmy }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

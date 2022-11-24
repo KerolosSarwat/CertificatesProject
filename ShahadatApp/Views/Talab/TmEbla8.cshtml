@@ -1,0 +1,207 @@
+﻿@model IEnumerable<ShahadatApp.Models.Talab>
+@using ShahadatApp.PrivateClasses
+@{
+    ViewBag.Title = "تم إبلاغه بالدفع";
+}
+<script>
+    function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('table');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+          XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+          XLSX.writeFile(wb, fn || ('تم إبلاغه بالدفع.' + (type || 'xlsx')));
+    }
+    function CopyText() {
+        /* Get the text field */
+        var copyText = document.getElementById("msgContent");
+
+        /* Select the text field */
+        copyText.select();
+        copyText.setSelectionRange(0, 999999); /* For mobile devices */
+
+        /* Copy the text inside the text field */
+        navigator.clipboard.writeText(copyText.value);
+
+        /* Alert the copied text */
+        alert("نسخ رسالة: " + copyText.value);
+    }
+</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<div class="sticky-md-top">
+    <h2>تم إبلاغه بالدفع</h2>
+</div>
+<div>
+    <button class="btn btn-secondary rounded-pill" onclick="CopyText()">نسخ الرسالة</button>
+    <p class="col-md-7" style="display:inline-block"></p>
+    <button class="btn btn-outline-success col-3 rounded-pill" style="direction:ltr" onclick="ExportToExcel('xlsx'), location.href='@Url.Action("UpdateTmEbla8", "Talab", new { fromDate = ViewBag.FromDate, toDate = ViewBag.ToDate })'">
+        <i class="fa fa-download"></i>
+        تحميل كشف Excel
+    </button>
+</div>
+<br />
+
+
+
+<div hidden>
+    @{
+        string message = "*ادارة التجنيد والتعبئة* المركز الاكترونى لخدمات التجنيد بخصوص طلبك  الشهاده الورقيه للدفع عن طريق الفيزا او فورى  برجاء الاستعلام عن طريق الرابط الاتى https://tagned.mod.gov.eg/CertificateSearch.aspx إدارة التجنيد و التعبئة المركز الألكترونى لخدمات التجنيد";
+
+        @Html.TextArea("MsgContent", message, htmlAttributes: new { id="msgContent"})
+    }
+</div>
+@using (Html.BeginForm("TmEbla8", "Talab"))
+{
+    <div class="col">
+        @Html.TextBox("FromDate", DateTime.Now.ToString("yyyy-MM-dd"), new { @class = "form-control rounded-pill", @type = "date", @style = "display:inline-block;" })
+
+        @Html.TextBox("ToDate", DateTime.Today.ToString("yyyy-MM-dd"), new { @class = "form-control rounded-pill", @type = "date", @style = "display:inline-block;" })
+        <button type="submit" class="btn btn-primary col" value="Search">فلتر</button>
+    </div>
+    <div class="col">
+        @using (Html.BeginForm("TmEbla8", "Talab"))
+        {
+            @Html.DropDownList("Interval", ViewBag.Intervals as IEnumerable<SelectListItem>, htmlAttributes: new { @class = "form-control form-select rounded-pill", @style = "display:inline-block;" })
+
+            @Html.DropDownList("SelectedArea", ViewBag.SelectedArea as IEnumerable<SelectListItem>,"الكل", htmlAttributes: new { @class = "form-control form-select rounded-pill", @style = "display:inline-block;" })
+            <span class="badge bg-success">اقل من ساعة</span>
+            <span class="badge bg-primary btn">من ساعة إلى 3</span>
+            <span class="badge bg-info btn">من 3 إلى 6</span>
+            <span class="badge bg-warning btn">من 6 إلى 12</span>
+            <span class="badge bg-danger btn">من 12 إلى 24</span>
+        }
+    </div>
+
+}
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.TalabNum)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Citizen.FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Citizen.Kawmy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Citizen.Phone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ServiceType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TmEbla8Msg)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Notes)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.TmEbla8Msg)
+            </th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @{ int counter = 1;}
+        @foreach (var item in Model)
+        {
+            string row = "";
+           
+            if (DateTime.Now.AddHours(-1) <= item.CreateDate)
+            {
+                row = "p-3 mb-2 bg-success text-white";
+            }
+            else if (DateTime.Now.AddHours(-1) > item.CreateDate && DateTime.Now.AddHours(-3) <= item.CreateDate)
+            {
+                row = "p-3 mb-2 bg-primary text-white";
+            }
+            else if (DateTime.Now.AddHours(-3) > item.CreateDate && DateTime.Now.AddHours(-6) <= item.CreateDate)
+            {
+                row = "p-3 mb-2 bg-info text-dark";
+            }
+            else if (DateTime.Now.AddHours(-6) > item.CreateDate && DateTime.Now.AddHours(-12) <= item.CreateDate)
+            {
+                row = "p-3 mb-2 bg-warning text-dark";
+            }
+            else if (DateTime.Now.AddHours(-12) > item.CreateDate && DateTime.Now.AddHours(-24) <= item.CreateDate)
+            {
+                row = "p-3 mb-2 bg-danger text-white";
+            }
+            <tr class="@row">
+                <td>@(counter++)</td>
+                <td>
+                    @{ 
+                        string link = "https://web.whatsapp.com/send?phone="+item.Citizen.Phone.Remove(0,1)+"&text="+Message.TmEbla8Msg;
+                    }
+                    @*<button class="btn btn-primary" title="Send Message" onclick="location.href ='@link'">Message</button>*@
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TalabNum)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Citizen.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Citizen.Kawmy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Citizen.Phone).ToString().Remove(0, 2)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ServiceType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TmEbla8Msg)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Notes)
+                </td>
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.TmEbla8Msg)
+                    @*<button class="btn btn-primary" onclick="location.href ='https://wa.me/201275626216'" ></button>
+                </td>*@
+            </tr>
+
+        }
+    </tbody>
+</table>
+<table id="table" hidden>
+    <tr>
+       
+        <th>Phone</th>
+        <th>Talab</th>
+        <th>Name</th>
+        <th>Kawmy</th>
+        <th>ServiceType</th>
+        <th>Message</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TalabNum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.Kawmy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ServiceType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Area.MorfkatNum)
+            </td>
+        </tr>
+    }
+</table>

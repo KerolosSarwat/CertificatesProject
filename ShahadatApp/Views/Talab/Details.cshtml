@@ -1,0 +1,90 @@
+﻿@model ShahadatApp.Models.Talab
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Talab</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Area.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Area.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Citizen.FullName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Citizen.FullName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PrintArea.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PrintArea.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TalabStatus)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TalabStatus)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ServicePostion)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ServicePostion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ServiceType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ServiceType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PrintDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PrintDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Notes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Notes)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreateDate)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.TalabNum }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

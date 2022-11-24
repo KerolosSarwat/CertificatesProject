@@ -1,0 +1,41 @@
+﻿body{
+    background-color: #1d2a35 !important;
+    color:#ddd;
+}
+label, i{
+    /*background-color: #1d2a35 !important;*/
+    color:black;
+}
+.container{
+    background-color: #1d2a35 !important;
+    color:#ddd;
+}
+p{
+    color: #FFF;
+}
+.table{
+    color:white;
+}
+
+.CitizenInfo {
+        border-radius: 10px;
+        background-color: #2b2d42;
+        padding: 20px 20px;
+}
+.control-label{
+        color:black;
+}
+
+.form-horizontal{
+    background-color: #1d2a35 !important;
+    color:#ddd;
+}
+#chartContainer{
+background-color: #1d2a35 !important;
+    color:#ddd;
+
+}
+#Mail{
+    color:white;
+}
+

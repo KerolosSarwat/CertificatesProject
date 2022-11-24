@@ -1,0 +1,294 @@
+﻿
+@*@model IEnumerable<ShahadatApp.Models.Talab>*@
+
+@model PagedList.IPagedList<ShahadatApp.Models.Talab>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@*<style>
+    tr td{
+        width:auto
+        text-wrap:none;
+    }
+    tbody tr {
+        transition: transform .3s;
+    }
+
+         tbody tr:hover {
+            background-color: lightgrey;
+            transform: scale(1.05);
+            border-radius:20px;
+           box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+        }
+</style>*@
+
+@{
+    ViewBag.Title = "طلبات المناطق";
+}
+
+<h2>طلبات المناطق</h2>
+
+<div class="row">
+    <button type="button" class="btn btn-success col-2" onclick="location.href='@Url.Action("Create", "Talab")'"><i class="bi bi-person-plus-fill"></i> اضافة طلب</button>
+    <p class="col-md-6" style="display:inline-block"></p>
+    @*<button class="btn btn-outline-success col-3" style="direction:ltr" onclick="ExportToExcel('xlsx')">
+            <i class="fa fa-download"></i>
+            تحميل كشف Excel
+        </button>*@
+</div>
+<br />
+    <div class="row">
+        <div class="col-8">
+            @using (Html.BeginForm("TalabatByArea", "Talab", FormMethod.Get))
+            {
+                <div class="row">
+                    <p class="col">
+                        @Html.DropDownList("PrintArea", ViewBag.PrintArea as IEnumerable<SelectListItem>, "الكل", htmlAttributes: new { @class = "form -control form-select rounded-pill", @style = "display:inline-block;" })
+                        @Html.DropDownList("SelectOption", ViewBag.SelectOption as IEnumerable<SelectListItem>, htmlAttributes: new { @class = "form-control form-select rounded-pill", @style = "display:inline-block;" })
+                    </p>
+                </div>
+                <div class="row">
+                    <p class="col">
+                        @Html.TextBox("FromDate", ViewBag.FromDate is DateTime, new { @class = "form-control rounded-pill col-2", @type = "date", @style = "display:inline-block;" })
+                        @Html.TextBox("ToDate", ViewBag.ToDate is DateTime, new { @class = "form-control rounded-pill col-2", @type = "date", @style = "display:inline-block;" })
+                        <button type="submit" class="btn btn-warning rounded-pill" value="Search" style="display:inline-block">  <i class="bi bi-filter-circle"></i> فلتر </button>
+                    </p>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        @Html.DropDownList("TalabStatus", ViewBag.TalabStatus as IEnumerable<SelectListItem>, htmlAttributes: new { @class = "form-control form-select rounded-pill", @style = "display:inline-block;" })
+                    </div>
+                    <div class="col-12" style="padding-top:16px;">
+                        <span class="badge bg-success">اقل من ساعة</span>
+                        <span class="badge bg-success">@ViewBag.GreenCount</span>
+                        <span class="badge bg-primary">من ساعة إلى 3</span>
+                        <span class="badge bg-primary">@ViewBag.BlueCount</span>
+                        <span class="badge bg-info">من 3 إلى 6</span>
+                        <span class="badge bg-info">@ViewBag.LightCount</span>
+                        <span class="badge bg-warning">من 6 إلى 12</span>
+                        <span class="badge bg-warning">@ViewBag.YellowCount</span>
+                        <span class="badge bg-danger">من 12 إلى 24</span>
+                        <span class="badge bg-danger">@ViewBag.RedCount</span>
+                        <span class="badge bg-dark">الباقى</span>
+                        <span class="badge bg-dark">@(ViewBag.AllCount - (ViewBag.GreenCount + ViewBag.RedCount + ViewBag.LightCount + @ViewBag.BlueCount + @ViewBag.YellowCount))</span>
+                        <span class="badge bg-dark">الكل</span>
+                        <span class="badge bg-dark">@ViewBag.AllCount</span>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-4">
+            @using (Html.BeginForm("TalabatByArea", "Talab", FormMethod.Get))
+            {
+                @Html.TextBox("SearchString", ViewBag.SearchString as string, new { @class = "form-control rounded-pill", @type = "text", @placeholder = "بحث / Search", @style = "display:inline-block;" })
+
+            }
+        </div>
+    </div>
+    <table class="table table-borderless table-responsive"> @*id="table"*@
+        <thead class="sticky-top" style="position:sticky;">
+            <tr>
+                <th></th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().TalabNum)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Citizen.FullName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Citizen.Kawmy)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Citizen.Phone)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Citizen.WhatsAppUser)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().TalabStatus)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().ServicePostion)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().CardServicePostion)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().ServiceType)
+                </th>
+                <th>تفاصيل/تعديل</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                string row = "";
+                if (DateTime.Now.AddHours(-1) <= item.CreateDate && !item.TalabStatus.Contains("تم الدفع"))
+                {
+                    row = "p-3 mb-2 bg-success text-white";
+                }
+                else if (DateTime.Now.AddHours(-1) > item.CreateDate && DateTime.Now.AddHours(-3) <= item.CreateDate && !item.TalabStatus.Contains("تم الدفع"))
+                {
+                    row = "p-3 mb-2 bg-primary text-white";
+                }
+                else if (DateTime.Now.AddHours(-3) > item.CreateDate && DateTime.Now.AddHours(-6) <= item.CreateDate && !item.TalabStatus.Contains("تم الدفع"))
+                {
+                    row = "p-3 mb-2 bg-info text-dark";
+                }
+                else if (DateTime.Now.AddHours(-6) > item.CreateDate && DateTime.Now.AddHours(-12) <= item.CreateDate && !item.TalabStatus.Contains("تم الدفع"))
+                {
+                    row = "p-3 mb-2 bg-warning text-dark";
+                }
+                else if (DateTime.Now.AddHours(-12) > item.CreateDate && DateTime.Now.AddHours(-24) <= item.CreateDate && !item.TalabStatus.Contains("تم الدفع"))
+                {
+                    row = "p-3 mb-2 bg-danger text-white";
+                }
+                <tr class="@row">
+                    <td width="1%">
+                        <button id="reaa" type="button" class="btn mybuttonclass btn-lg" data-id="@item.TalabNum">
+                            <i class="bi bi-whatsapp" width ="64" highet ="64"></i>
+                        </button>
+
+                        @*@if (String.IsNullOrEmpty(item.Citizen.Mosalsal))
+                        {
+                            <span class="badge rounded-pill bg-dark">يدوى</span>
+                        }*@
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TalabNum)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Citizen.FullName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Citizen.Kawmy)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Citizen.Phone).ToString().Remove(0, 2)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Citizen.WhatsAppUser)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TalabStatus)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ServicePostion)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CardServicePostion)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ServiceType)
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal" kawmy=@item.Citizen.Kawmy talabNum =@item.TalabNum><i class="bi bi-qr-code-scan"></i></button>
+                        
+                        <i class="bi bi-pencil-square btn btn-dark btn-sm rounded-pill" onclick="location.href='@Url.Action("Edit", "Talab", new { id = item.TalabNum , previousUrl = Request.Url.ToString()})'"></i>
+                        @*<button type="button" class="btn btn-dark btn-sm rounded-pill" onclick="location.href='@Url.Action("Edit", "Talab", new { id = item.TalabNum , previousUrl = Request.Url.ToString()})'">
+                            تعديل
+                        </button>*@
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+<div class="text-center" dir="ltr">
+    @Html.PagedListPager(Model, page => Url.Action("TalabatByArea", new { page, fromDate = ViewBag.FromDate, toDate = ViewBag.ToDate, printArea = ViewBag.SelectedArea, talabStatus = ViewBag.TalabStatus.SelectedValue }))
+</div>
+    <table id="table" hidden>
+        <tr>
+            <th>Talab</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Kawmy</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TalabNum)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Citizen.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Citizen.Kawmy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Citizen.Phone)
+                </td>
+            </tr>
+        }
+    </table>
+
+
+@* Modal to Pass Data *@
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" dir="ltr">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+                <form>
+                    <div class="mb-3">
+                        <svg id="TalabNum"></svg>
+                        <br />
+                        <svg id="Kawmy"></svg>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('table');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+          XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+          XLSX.writeFile(wb, fn || ('الشهادات.' + (type || 'xlsx')));
+    }
+
+    $("#myLink").click(function (e) {
+
+        e.preventDefault();
+        $.ajax({
+
+            url: $(this).attr("href"), // comma here instead of semicolon
+            success: function () {
+                alert("Value Added");  // or any other indication if you want to show
+            }
+
+        });
+
+    });
+
+    function AddToCart() { $.ajax({ url: "SendNotification", success: function () { alert("success"); } }); return false; }
+    const exampleModal = document.getElementById("exampleModal")
+    
+    exampleModal.addEventListener('show.bs.modal', event => {
+        // Button that triggered the modal
+        const button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        const kawmy = button.getAttribute('kawmy')
+        const TalabNum = button.getAttribute('talabNum')
+        debugger
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        const modalBodyInput = exampleModal.querySelector('.modal-body input')
+        JsBarcode("#Kawmy", kawmy);
+        JsBarcode("#TalabNum", TalabNum);
+        //modalBodyInput.value = kawmy
+    })
+</script>

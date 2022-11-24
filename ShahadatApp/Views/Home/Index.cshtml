@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<link href="~/Content/Glowing.css" rel="stylesheet" />
+<head>
+    <script>
+    window.onload = function(){
+        var image = document.getElementById("logo");
+        document.getElementById("logo").style.transition = "all 2s";
+    }
+    </script>
+</head>
+
+
+
+<br />
+<div class="jumbotron">
+    <img src="~/Icons/favicon.png" id="logo" alt="E-Center" style="display:inline-block; float:right;"/>
+    <h1>المركز الألكترونى لخدمات التجنيد</h1>
+    <h2>E-Center For Recruitment Service</h2>
+    @*class="glow"*@
+</div>
+

@@ -1,0 +1,144 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<div class="notification-icon" style="margin-top:10px">
+    <span class="glyphicon glyphicon-envelope" style="font-size:25px"></span>
+    <span class="badge" id="ntCnt"></span>
+</div>
+
+<div id="divNotificaion">
+
+
+</div>
+
+<script>
+    $("body").on("click", ".closeBtnclass", function (e) {
+
+        var myBtn = $(e.currentTarget);
+        var itemId = myBtn.attr("data-id");
+        var innerSpan = $(myBtn.get(0).firstElementChild);
+        e.preventDefault();
+
+        swal({
+            title: "Are you sure To Delete it?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+        }).then(function (value) {
+
+            if (value === true) {
+                myBtn.addClass("disabled");
+                innerSpan.addClass("fa-spin");
+                debugger
+                $.ajax({
+
+                    url: '@Url.Action("Index", "Notification")',
+                    data: { "id": itemId },
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.success === true) {
+                            swal({
+                                title: "Done!",
+                                //text: result.message,
+                                icon: "success"
+                            });
+                        } else {
+                            swal({
+                                title: "Error!",
+                                //text: result.message,
+                                icon: "error"
+                            });
+                        }
+
+                        myBtn.removeClass("disabled");
+                        innerSpan.removeClass("fa-spin");
+                    },
+                    error: function (xhr, textStatus, error) {
+                        swal({
+                            title: "Error!",
+                            text: xhr.statusText,
+                            icon: textStatus
+                        });
+
+                        myBtn.removeClass("disabled");
+                        innerSpan.removeClass("fa-spin");
+                    },
+                });
+            }
+        });
+    });
+</script>
+<script>
+    $(function () {
+        // Reference the auto-generated proxy for the hub.
+
+        //var progress = $.connection.myHub;
+        var hub = $.connection.myHub;
+
+
+        // Declare a function on the hub hub so the server can invoke it
+        hub.client.displayStatus = function () {
+            getData();
+            toastr.options = {
+                positionClass: "toast-bottom-right",
+                timeOut: 3000
+            };
+            toastr.warning(message);
+        };
+
+        // Start the connection
+        $.connection.hub.start();
+        getData();
+
+
+
+        function getData() {
+            var divNotificaion = $('#divNotificaion');
+            $.ajax({
+                url: '/Notification/GetNotification',
+                type: 'GET',
+                datatype: 'json',
+                success: function (data) {
+                    debugger
+                    data = $.parseJSON(data);
+                    if (data.length > 0) {
+                        divNotificaion.empty();
+                        //// set Count
+                        $('#ntCnt').text(data.length);
+
+
+                        ///Make notification html
+                        for (var i = 0; i < data.length; i++) {
+                            //var Url = "'location.href="@@Url.Action("DeleteNotification", "Notification", new { id ="+ data[i].NotificationID+"})'";
+
+                            var notification = '<div class="alert alert-success alert-dismissable fade show">' +
+                                '<button type="button" class="btn-close closeBtnclass" data-id="' + data[i].NotificationID + '" data-bs-dismiss="alert"></button>'
+                        //'<a href="Url.Action("DeleteNotification", "Notification", new { id = 63 })" class="close" data-dismiss="alert" aria-label="close">&times;</a>'
+                        + data[i].Message +
+                    '</div>'
+                            divNotificaion.append(notification);
+                        }
+
+                    }
+                }, error: function (r, e, w) {
+                }
+            });
+        }
+        debugger
+        // Create a function that the hub can call back to display messages.
+        hub.client.DisplayNotification = function (message) {
+
+            toastr.options = {
+                positionClass: "toast-bottom-right",
+                timeOut: 3000
+            };
+            toastr.warning(message);
+        };
+
+        //$.connection.hub.start()
+    });
+</script>
+

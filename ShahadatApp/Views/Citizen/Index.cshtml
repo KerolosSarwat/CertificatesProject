@@ -1,0 +1,71 @@
+﻿@*@model IEnumerable<ShahadatApp.Models.Citizen>*@
+@model PagedList.IPagedList<ShahadatApp.Models.Citizen>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+@{
+    ViewBag.Title = "المواطنين";
+}
+
+<h2>المواطنين</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.TextBox("SearchString", ViewBag.SearchString as string, new { @class = "form-control rounded-pill", @type = "text", @placeholder = "بحث / Search", @style = "display:inline-block;" })
+}
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Kawmy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().FullName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Phone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().WhatsAppUser)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Milad)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().Mosalsal)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Kawmy)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FullName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Phone)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.WhatsAppUser)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Milad)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Mosalsal)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Kawmy }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Kawmy }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Kawmy })
+        </td>
+    </tr>
+}
+
+</table>
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page }))

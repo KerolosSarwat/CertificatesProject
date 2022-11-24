@@ -1,0 +1,204 @@
+﻿@model IEnumerable<ShahadatApp.Models.Talab>
+
+@{
+    ViewBag.Title = "الخدمة جاهزة ";
+}
+
+<div class="sticky-md-top">
+    <h2>الخدمة جاهزة </h2>
+</div>
+
+<div class="row">
+    <button class="btn btn-danger rounded-pill col m-1" onclick="StatusEdited(); location.href='@Url.Action("UpdateServicePostion", "Talab",new { fromDate = ViewBag.FromDate, toDate = ViewBag.ToDate })'" data-bs-toggle="tooltip" title="تحديث بيانات طلبات طباعة الخدمة">
+        تحديث الحالة
+        <i class="fa fa-spinner fa-spin"></i>
+    </button>
+    <button class="btn btn-warning rounded-pill col m-1" onclick="CopyText()">نسخ الرسالة</button>
+    <p class="col-md-6" style="display:inline-block"></p>
+
+    <button class="btn btn-outline-success col-3 rounded-pill" style="direction:ltr" onclick="ExportToExcel('xlsx'); location.href='@Url.Action("ServiceDone", "Talab", new { fromDate = ViewBag.FromDate, toDate = ViewBag.ToDate })'">
+        <i class="fa fa-download"></i>
+        تحميل كشف Excel
+    </button>
+</div>
+
+<br />
+<div hidden>
+    @Html.TextArea("MsgContent", ShahadatApp.PrivateClasses.Message.El5dmaGahza, htmlAttributes: new { id = "msgContent" })
+</div>
+@using (Html.BeginForm("ServiceReady", "Talab"))
+{
+    @Html.TextBox("FromDate", DateTime.Now.ToString("yyyy-MM-dd"), new { @class = "form-control rounded-pill m-1", @type = "date", @style = "display:inline-block;" })
+
+    @Html.TextBox("ToDate", DateTime.Now.ToString("yyyy-MM-dd"), new { @class = "form-control rounded-pill m-1", @type = "date", @style = "display:inline-block;" })
+    <button type="submit" class="btn btn-primary col rounded-pill" value="Search">فلتر</button>
+}
+<table class="table" id="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.TalabNum)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Citizen.FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Citizen.Kawmy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Citizen.Phone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ServiceType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PrintDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Area.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    @{ int counter = 1;}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@(counter++)</td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TalabNum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.Kawmy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.Phone).ToString().Remove(0, 2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ServiceType)
+            </td>
+
+
+            @if (item.ServiceType == "شهادة")
+            {
+                <td>@Html.DisplayFor(modelItem => item.PrintDate)</td>
+            }
+            else if (item.ServiceType == "كارنيه")
+            {
+                <td>@Html.DisplayFor(modelItem => item.CardPrintDate)</td>
+            }
+
+            @if (item.Area.Name.Contains("قسم"))
+            {
+                <td> @Html.DisplayFor(modelItem => item.Area.Name) (مديرية الأمن)</td> 
+                
+            }
+            else
+            {
+                <td>@Html.DisplayFor(modelItem => item.Area.Name)</td>
+            }
+
+        </tr>
+}
+</table>
+<table id="Exceltable" hidden>
+    <tr>
+        <th>Phone</th>
+        <th>Place</th>
+        <th>Name</th>
+        <th>Talab</th>
+        <th>Locations</th>
+        <th>ServiceType</th>
+        <th>PrintDate</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.Phone)
+            </td>
+
+            @if (item.Area.Name.Contains("قسم"))
+            {
+                <td> @Html.DisplayFor(modelItem => item.Area.Name) (مديرية الأمن)</td>
+
+            }
+            else
+            {
+                <td>@Html.DisplayFor(modelItem => item.Area.Name)</td>
+            }
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TalabNum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Area.Location)
+            </td>
+           @{ string serviceType = ""; }
+        @if (item.ServicePostion == "الخدمة جاهزة للأستلام" && item.PrintDate == ViewBag.FromDate)
+        {
+            serviceType = "شهادة";
+        }
+        @if (item.CardServicePostion == "الخدمة جاهزة للأستلام" && item.CardPrintDate == ViewBag.FromDate)
+        {
+            serviceType = "كارنيه";
+        }
+        @if (item.ServicePostion == "الخدمة جاهزة للأستلام" && item.CardServicePostion == "الخدمة جاهزة للأستلام" && item.PrintDate == ViewBag.FromDate && item.CardPrintDate == ViewBag.FromDate)
+        {
+            serviceType = "شهادة و كارنيه";
+        }
+        <td>
+                @Html.DisplayFor(modelItem => item.ServiceType)
+            </td>
+
+
+            @if (item.ServiceType == "شهادة")
+            {
+                <td>@Html.DisplayFor(modelItem => item.PrintDate)</td>
+            }
+            else if (item.ServiceType == "كارنيه")
+            {
+                <td>@Html.DisplayFor(modelItem => item.CardPrintDate)</td>
+            }
+
+
+        </tr>
+    }
+</table>
+
+
+<script>
+    function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('Exceltable');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+          XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+          XLSX.writeFile(wb, fn || ('الخدمات الجاهزة.' + (type || 'xlsx')));
+    }
+    function CopyText() {
+        /* Get the text field */
+        var copyText = document.getElementById("msgContent");
+
+        /* Select the text field */
+        copyText.select();
+        copyText.setSelectionRange(0, 999999); /* For mobile devices */
+
+        /* Copy the text inside the text field */
+        navigator.clipboard.writeText(copyText.value);
+
+        /* Alert the copied text */
+        alert("نسخ رسالة: " + copyText.value);
+    }
+
+    function StatusEdited() {
+        alert("تم تعديل الحالة");
+    }
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) { return new bootstrap.Tooltip(tooltipTriggerEl) })
+</script>

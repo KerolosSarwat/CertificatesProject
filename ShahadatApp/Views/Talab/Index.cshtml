@@ -1,0 +1,169 @@
+﻿@model IEnumerable<ShahadatApp.Models.Talab>
+
+@*@model PagedList.IPagedList<ShahadatApp.Models.Talab>*@
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "الطلبات";
+}
+<br />
+<h2>الطلبات</h2>
+<script>
+    function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('table');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+          XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+          XLSX.writeFile(wb, fn || ('الشهادات.' + (type || 'xlsx')));
+    }
+</script>
+
+<div>
+    <button type="button" class="btn btn-success col-2" onclick="location.href='@Url.Action("Create", "Talab")'">اضافة طلب</button>
+    <p class="col-md-6" style="display:inline-block"></p>
+    @*<button class="btn btn-outline-success col-3" style="direction:ltr" onclick="ExportToExcel('xlsx')">تحميل كشف Excel</button>*@
+</div>
+<br />
+@using (Html.BeginForm("Index", "Talab", FormMethod.Get))
+{
+    <div class="row">
+        <p class="col">
+            البحث:
+            @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control", @type = "text", @placeholder = "الأسم / الرقم القومى / رقم الطلب" })
+            <button type="submit" class="btn btn-primary col-2" value="Search">بحث</button>
+        </p>
+        <p class="col">
+            موقف الخدمة:
+            @Html.DropDownList("SelectOption", null, htmlAttributes: new { @class = "form-control form-select", @style = "display:inline-block;" })
+            <button type="submit" class="btn btn-primary col" value="Search">فلتر</button>
+        </p>
+        <p class="col">
+            حالة الطلب:
+            @Html.DropDownList("talabStatus", null, htmlAttributes: new { @class = "form-control form-select", @style = "display:inline-block;" })
+            <button type="submit" class="btn btn-primary col" value="Search">فلتر</button>
+        </p>
+        <div>
+            <p>
+                من
+                @Html.TextBox("FromDate", ViewBag.FromDate as DateTime?, new { @class = "form-control", @type = "date", @style = "display:inline-block;" })
+                إلى
+                @Html.TextBox("ToDate", ViewBag.ToDate as DateTime?, new { @class = "form-control", @type = "date", @style = "display:inline-block;" })
+                <button type="submit" class="btn btn-primary" value="Search">Filter</button>
+            </p>
+        </div>
+    </div>
+}
+   
+        <table class="table"id="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.TalabNum)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Citizen.FullName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Citizen.Kawmy)
+                    </th>
+                    <th>
+                        <img src="~/Icons/WhatsApp.png" width="30" height="30" />
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.TalabStatus)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ServicePostion)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ServiceType)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Notes)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+            {
+                    <tr>
+                        <td>
+                            @if (item.CreateDate > DateTime.Now.AddDays(-1))
+                            {
+                                <span class="badge rounded-pill bg-success">جديد</span>
+                            }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TalabNum)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Citizen.FullName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Citizen.Kawmy)
+                        </td>
+                        <td>
+                            @Html.EditorFor(modelItem => item.Citizen.WhatsAppUser)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TalabStatus)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ServicePostion)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ServiceType)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Notes)
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="location.href='@Url.Action("Edit", "Talab", new { id = item.TalabNum, previousUrl = Request.Url.ToString() })'">
+                                تعديل
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="location.href='@Url.Action("Delete", "Talab", new { id = item.TalabNum })'"> حذف </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+<br />
+
+<table id="table" hidden>
+    <tr>
+        <th>
+            Phone
+        </th>
+        <th>
+            Place
+        </th>
+        <th>
+            Name
+        </th>
+        <th>
+            Talab
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Area.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TalabNum)
+            </td>
+        </tr>
+    }
+</table>
+

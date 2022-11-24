@@ -1,0 +1,135 @@
+﻿@model IEnumerable<ShahadatApp.Models.Talab>
+
+@{
+    ViewBag.Title = "متابعة المرفقات";
+}
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<div class="sticky-md-top">
+    <h2>طلبات بدون مرفقات</h2>
+</div>
+<div>
+    <button class="btn btn-secondary rounded-pill" onclick="CopyText()">نسخ الرسالة</button>
+    <p class="col-md-7" style="display:inline-block"></p>
+    <button class="btn btn-outline-success col-3 rounded-pill" style="direction:ltr" onclick="ExportToExcel('xlsx')">
+        <i class="fa fa-download"></i>
+        تحميل كشف Excel
+    </button>
+</div>
+<br />
+@* location.href='@Url.Action("UpdateTmDaf3", "Talab", new { fromDate = ViewBag.FromDate, toDate = ViewBag.ToDate })' *@
+
+<div hidden>
+    @Html.TextArea("MsgContent", ShahadatApp.PrivateClasses.Message.TmDaf3Msg, htmlAttributes: new { id = "msgContent" })
+</div>
+@using (Html.BeginForm("Morfkat", "Talab"))
+{
+    @Html.TextBox("FromDate", DateTime.Now.ToString("yyyy-MM-dd"), new { @class = "form-control rounded-pill m-1", @type = "date", @style = "display:inline-block;" })
+
+    @Html.TextBox("ToDate", DateTime.Now.ToString("yyyy-MM-dd"), new { @class = "form-control rounded-pill m-1", @type = "date", @style = "display:inline-block;" })
+    @Html.DropDownList("TalabStatus", ViewBag.TalabStatus as IEnumerable<SelectListItem>, htmlAttributes: new { @class = "form-control form-select rounded-pill", @style = "display:inline-block;" })
+    <button type="submit" class="btn btn-primary col" value="Search">فلتر</button>
+}
+<table class="table">
+    <tr>
+        <th></th>
+        <th>
+            @Html.DisplayNameFor(model => model.TalabNum)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Citizen.FullName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Citizen.Kawmy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Citizen.Phone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ServiceType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Citizen.WhatsAppUser)
+        </th>
+        <th>
+            تم الاستلام
+        </th>
+    </tr>
+    @{ int counter = 1;}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@(counter++)</td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TalabNum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.Kawmy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.Phone).ToString().Remove(0, 2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ServiceType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.WhatsAppUser)
+            </td>
+            <td>
+                <i class="bi bi-check btn btn-dark btn-sm rounded-pill" style="color: rgb(0, 128, 55);" onclick="location.href='@Url.Action("MarkMorfkat", "Talab", new { kawmy = item.Citizen.Kawmy, url = Request.Url.ToString()})'"/>
+            </td>
+        </tr>
+    }
+</table>
+<table id="table" hidden>
+    <tr>
+        <th>Phone</th>
+        <th>Talab</th>
+        <th>Name</th>
+        <th>Kawmy</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TalabNum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.Kawmy)
+            </td>
+        </tr>
+    }
+</table>
+
+<script>
+    function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('table');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+          XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+          XLSX.writeFile(wb, fn || ('طلبات بدون مرفقات.' + (type || 'xlsx')));
+    }
+    function CopyText() {
+        /* Get the text field */
+        var copyText = document.getElementById("msgContent");
+
+        /* Select the text field */
+        copyText.select();
+        copyText.setSelectionRange(0, 999999); /* For mobile devices */
+
+        /* Copy the text inside the text field */
+        navigator.clipboard.writeText(copyText.value);
+
+        /* Alert the copied text */
+        alert("نسخ رسالة: " + copyText.value);
+    }
+</script>

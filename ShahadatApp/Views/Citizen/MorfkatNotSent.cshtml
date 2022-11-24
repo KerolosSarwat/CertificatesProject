@@ -1,0 +1,81 @@
+﻿@model IEnumerable<ShahadatApp.Models.Citizen>
+
+@{
+    ViewBag.Title = "مرفقات لم يتم سحبها";
+}
+
+<h2>مرفقات لم يتم سحبها</h2>
+<button class="btn btn-outline-success col-3 rounded-pill" style="direction:ltr" onclick="ExportToExcel('xlsx')">
+    <i class="fa fa-download"></i>
+    تحميل كشف Excel
+</button>
+
+<button class="btn btn-danger col-3 rounded-pill" id="CopyBtn">
+    نسخ المرفقات
+</button>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Kawmy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Phone)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ int counter = 1;}
+        @foreach (var item in Model)
+        {
+
+            <tr>
+                <td>@(counter++)</td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Kawmy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone).ToString().Remove(0,2)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('Exceltable');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ? XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) : XLSX.writeFile(wb, fn || ('مرفقات لم يتم سحبها.' + (type || 'xlsx')));
+    }
+
+    $("#CopyBtn").click(function () {
+        var dataList = $('td:nth-child(3)');
+        var kawmyList = new Array();
+
+        for (var i = 0; i < dataList.length; i++) {
+            kawmyList.push(dataList[i].innerText);
+        }
+
+        
+        alert('يتم النسخ ... \n انتظر رسالة تم النسخ');
+        $.ajax({
+            type: "GET",
+            url: "/Citizen/MorfkatNotSent",
+            data: { isCopy: true },
+            dataType: "json",
+            success: function (details) {
+                
+                alert(details);
+            }
+        });
+    });
+
+</script>

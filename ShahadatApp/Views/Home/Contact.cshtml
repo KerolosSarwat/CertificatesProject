@@ -1,0 +1,86 @@
+﻿@{
+    ViewBag.Title = "التقرير الشامل";
+}
+<script>
+    window.onload = function () {
+        var color = 'white'
+    if (localStorage.getItem('darkMode') === "true")
+        color = '#1d2a35'
+var chart = new CanvasJS.Chart("chartContainer", {
+    animationEnabled: true,
+    //backgroundColor:color,
+    exportEnabled: true,
+	title: {
+		text: "تقرير حالة الطلبات"
+	},
+	data: [{
+		type: "doughnut",
+		startAngle: 60,
+		indexLabelFontSize: 16,
+		indexLabel: "{label} - {y}%",
+		toolTipContent: "<b>{label}:</b> {y}%",
+		dataPoints: @Html.Raw(ViewBag.DataPoints)
+	}]
+});
+chart.render();
+
+}
+</script>
+<style>
+
+</style>
+<h2>@ViewBag.Title</h2>
+@using (Html.BeginForm("Contact", "Home", FormMethod.Get))
+{
+    @Html.TextBox("FromDate", DateTime.Now.ToString("yyyy-MM-dd"), new { @class = "form-control rounded-pill", @type = "date", @style = "display:inline-block;" })
+
+    @Html.TextBox("ToDate", DateTime.Now.ToString("yyyy-MM-dd hh:mm"), new { @class = "form-control rounded-pill", @type = "date", @style = "display:inline-block;" })
+    <button type="submit" class="btn btn-primary col" value="Search">فلتر</button>
+}
+
+<div id="chartContainer" style="height: 270px; width: 50%; float:left"></div>
+
+    @{List<string> servicePostion = new List<string>()
+            {
+                "", "إستخراج كاشير", "تسجيل بيانات", "مراجعة بيانات", "طباعة الخدمة", "إستلام مندوب", "الخدمة جاهزة للأستلام", "تم تسليم الخدمة"
+            };
+    }
+<table class="table table-bordered" style="width:22%;"> 
+    <tr>
+        <th>اجمالى الطلبات</th>
+        <th>@ViewData["TalabCounter"]</th>
+    </tr>
+    <tr>
+        <th>عدد الطلبات تم ابلاغه</th>
+        <td>@ViewData["TalbEbl8"]</td>
+    </tr>
+    <tr>
+        <th>عدد الطلبات تم  الدفع</th>
+        <td>@ViewData["TalbDf3"]</td>
+    </tr>
+    @for (int i = 0; i < 8; i++) {
+        <tr>
+            @if (i == 0) {
+            <th>لا يوجد موقف</th>
+            <td>@ViewData["NoPostion"]</td>
+            }
+            else {
+            <th>@servicePostion[i]</th>
+            <td>@ViewData[servicePostion[i]]</td>
+            }
+        </tr>
+    }
+</table>
+
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>	
+@*<address>
+    One Microsoft Way<br />
+    Redmond, WA 98052-6399<br />
+    <abbr title="Phone">P:</abbr>
+    425.555.0100
+</address>
+
+<address>
+    <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
+    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
+</address>*@

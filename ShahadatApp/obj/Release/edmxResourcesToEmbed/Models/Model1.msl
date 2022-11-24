@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="ShahadatAppModelStoreContainer" CdmEntityContainer="ShahadatAppEntities">
+    <EntitySetMapping Name="Notification">
+      <EntityTypeMapping TypeName="ShahadatAppModel.Notification">
+        <MappingFragment StoreEntitySet="Notification">
+          <ScalarProperty Name="NotificationID" ColumnName="NotificationID" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Message" ColumnName="Message" />
+          <ScalarProperty Name="ExtraColumn" ColumnName="ExtraColumn" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

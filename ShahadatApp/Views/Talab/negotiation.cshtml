@@ -1,0 +1,127 @@
+﻿@model IEnumerable<ShahadatApp.Models.Talab>
+
+@{
+    ViewBag.Title = "تفاوض";
+}
+<script>
+    function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('table');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+          XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+          XLSX.writeFile(wb, fn || ('تفاوض.' + (type || 'xlsx')));
+    }
+    function CopyText() {
+        /* Get the text field */
+        var copyText = document.getElementById("msgContent");
+
+        /* Select the text field */
+        copyText.select();
+        copyText.setSelectionRange(0, 999999); /* For mobile devices */
+
+        /* Copy the text inside the text field */
+        navigator.clipboard.writeText(copyText.value);
+
+        /* Alert the copied text */
+        alert("نسخ رسالة: " + copyText.value);
+    }
+</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<div class="sticky-md-top">
+    <h2>تفاوض</h2>
+</div>
+<div>
+    <button class="btn btn-secondary rounded-pill" onclick="CopyText()">نسخ الرسالة</button>
+    <p class="col-md-7" style="display:inline-block"></p>
+    <button class="btn btn-outline-success col-3 rounded-pill" style="direction:ltr" onclick="ExportToExcel('xlsx'), location.href='@Url.Action("UpdateNegotiation", "Talab", new { fromDate = ViewBag.FromDate, toDate = ViewBag.ToDate })'">
+        <i class="fa fa-download"></i>
+        تحميل كشف Excel
+    </button>
+</div>
+<br />
+
+@{
+    string message = "بخصوص طلبك (شهادة/كارنية) \n اذا كنت تريد الشهادة الورقية فقط قم بارسال الرقم القومي ومكان استلام الشهادة . \n (خدمة كارنية غير متاحة حاليا اونلاين ) \n إدارة التجنيد و التعبئة \n المركز الإلكتروني لخدمات التجنيد\n";
+    <div hidden>
+        @Html.TextArea("MsgContent", message, htmlAttributes: new { id = "msgContent" })
+    </div>
+}
+
+@using (Html.BeginForm("negotiation", "Talab"))
+{
+    @Html.TextBox("FromDate", DateTime.Now.ToString("yyyy-MM-dd"), new { @class = "form-control rounded-pill m-1", @type = "date", @style = "display:inline-block;" })
+
+    @Html.TextBox("ToDate", DateTime.Now.ToString("yyyy-MM-dd"), new { @class = "form-control rounded-pill m-1", @type = "date", @style = "display:inline-block;" })
+    <button type="submit" class="btn btn-primary col" value="Search">فلتر</button>
+}
+<table class="table">
+    <tr>
+        <th></th>
+        <th>
+            @Html.DisplayNameFor(model => model.TalabNum)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Citizen.FullName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Citizen.Kawmy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Citizen.Phone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ServiceType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Area.Name)
+        </th>
+        <th></th>
+    </tr>
+    @{ int counter = 1;}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@(counter++)</td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TalabNum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.Kawmy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.Phone).ToString().Remove(0, 2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ServiceType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Area.Name)
+            </td>
+        </tr>
+    }
+</table>
+<table id="table" hidden>
+    <tr>
+        <th>Phone</th>
+        <th>Name</th>
+        <th>Kawmy</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citizen.Kawmy)
+            </td>
+        </tr>
+    }
+</table>

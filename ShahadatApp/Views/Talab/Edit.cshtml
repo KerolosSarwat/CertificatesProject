@@ -1,0 +1,234 @@
+﻿
+@model ShahadatApp.Models.Talab
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<style>
+    .CitizenInfo {
+        border-radius: 10px;
+        background-color: #f2f2f2;
+        padding: 20px 20px;
+    }
+
+    .control-label {
+        color: black;
+    }
+</style>
+<div class="container mt-3">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.CreateDate)  
+            @Html.HiddenFor(model => model.Citizen.Kawmy)
+            @Html.HiddenFor(model => model.TmEbla8Msg)
+            @Html.HiddenFor(model => model.TmDaf3Msg)
+            @Html.HiddenFor(model => model.isNegotiated)
+            @Html.HiddenFor(model => model.isCanceled)
+            @Html.HiddenFor(model => model.Citizen.MorfkatRecieved)
+            @Html.HiddenFor(model => model.Citizen.Milad)
+            @Html.HiddenFor(model => model.Citizen.Mosalsal)
+            @Html.HiddenFor(model => model.Citizen.WhatsAppUser)
+            <div class="row">
+                <div class="col"></div>
+                <div class="CitizenInfo col-10">
+                    <h3> <i class="bi bi-person-circle"></i> بيانات المواطن</h3>
+                    <div class="form-group row mt-3">
+                        <div class="col row m-0">
+                            @Html.EditorFor(model => model.Citizen.FullName, new { htmlAttributes = new { @class = "form-control", placeholder = "الأسم" } })
+                            @Html.ValidationMessageFor(model => model.Citizen.FullName, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col row m-0">
+                            @Html.EditorFor(model => model.Kawmy, new { htmlAttributes = new { @class = "form-control", required = "required", placeholder = "الرقم القومى" } })
+                            @Html.ValidationMessageFor(model => model.Kawmy, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-3">
+                        <div class="col row m-0">
+                            @Html.EditorFor(model => model.Citizen.Phone, new { htmlAttributes = new { @class = "form-control", placeholder = "رقم الموبايل" } })
+                            @Html.ValidationMessageFor(model => model.Citizen.Phone, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col row m-0">
+                            @Html.EditorFor(model => model.Citizen.MktbCode, new { htmlAttributes = new { @class = "form-control", placeholder = "كود المكتب" } })
+                            @Html.ValidationMessageFor(model => model.Citizen.MktbCode, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <hr />
+                    <h3> <i class="bi bi-bag-fill"></i> بيانات الطلب</h3>
+                    <div class="form-group row mt-3">
+                        <div class="col row m-0">
+                            @Html.EditorFor(model => model.TalabNum, new { htmlAttributes = new { @class = "form-control col-5", placeholder = "رقم الطلب" } })
+                            @Html.ValidationMessageFor(model => model.TalabNum, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col row m-0">
+                            @Html.DropDownList("TalabStatus", null, htmlAttributes: new { @class = "form-control form-select" })
+                            @Html.ValidationMessageFor(model => model.TalabStatus, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-3">
+                        <div class="col row m-0">
+                            @Html.DropDownList("PrintAreaID", null, htmlAttributes: new { @class = "form-control form-select PrintAreaID " })
+                            @Html.ValidationMessageFor(model => model.PrintAreaID, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col row m-0">
+                            @Html.DropDownList("RecievedAreaID", null, htmlAttributes: new { @class = "form-control form-select" })
+                            @Html.ValidationMessageFor(model => model.RecievedAreaID, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row mt-3">
+                        <div class="col row m-0">
+                            @Html.LabelFor(model => model.ServiceType, htmlAttributes: new { @class = "control-label" })
+                            @Html.DropDownList("ServiceType", null, htmlAttributes: new { @class = "form-control form-select" })
+                            @Html.ValidationMessageFor(model => model.ServiceType, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col row m-0">
+                            @Html.LabelFor(model => model.CertificateType, htmlAttributes: new { @class = "control-label" })
+                            @Html.DropDownList("CertificateType", null, htmlAttributes: new { @class = "form-control form-select" })
+                            @Html.ValidationMessageFor(model => model.CertificateType, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group row mt-3">
+                        <div class="col row m-0">
+                            @Html.LabelFor(model => model.ServicePostion, htmlAttributes: new { @class = "control-label" })
+                            @Html.DropDownList("ServicePostion", null, htmlAttributes: new { @class = "form-control form-select" })
+                            @Html.ValidationMessageFor(model => model.ServicePostion, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col row m-0">
+                            @Html.LabelFor(model => model.PrintDate, htmlAttributes: new { @class = "control-label"})
+                            @Html.EditorFor(model => model.PrintDate, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.PrintDate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group row mt-3">
+                        <div class="col row m-0">
+                            @Html.LabelFor(model => model.CardServicePostion, htmlAttributes: new { @class = "control-label" })
+                            @Html.DropDownList("CardServicePostion", null, htmlAttributes: new { @class = "form-control form-select" })
+                            @Html.ValidationMessageFor(model => model.ServicePostion, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col row m-0">
+                            @Html.LabelFor(model => model.CardPrintDate, htmlAttributes: new { @class = "control-label" })
+                            @Html.EditorFor(model => model.CardPrintDate, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.CardPrintDate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group row mt-3">
+                        <div class="col row m-0">
+                            @Html.EditorFor(model => model.Notes, new { htmlAttributes = new { @class = "form-control", placeholder = "Notes" } })
+                            @Html.ValidationMessageFor(model => model.Notes, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="row mt-3 m-0">
+                            <button type="submit" id="submit" class="btn btn-dark" style="display:inline-block">تعديل</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col"></div>
+                
+            </div>
+
+            @*<button class="btn btn-danger" onclick="location.href='@Url.Action("Delete", "Talab", new { id = Model.TalabNum })'">حذف</button>*@
+        </div>
+    }
+</div>
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script>
+    $("#PrintAreaID").on("change",() => {
+        var area = $('#PrintAreaID').find(":selected").text().trim().replace('وتعبئة ', '');
+        debugger
+        var listAreas = $.ajax({
+            type: "GET",
+            url: "/Talab/RecievedAreas",
+            data: { areaName: area },
+            dataType: "json",
+            success: function (areaList) {
+                recivedList = $("#RecievedAreaID").empty()
+                debugger
+                for (var i = 0; i < areaList.length; i++) {
+                    if (areaList[i].Name.includes('إدارة') || areaList[i].Name.includes('قسم') || areaList[i].Name.includes('منطقة') || areaList[i].Name.includes('مكتب')) {
+                        recivedList.append($('<option></option>').val(areaList[i].MktbCode).html(areaList[i].Name));
+                    }
+
+                }
+            }
+        });
+
+    });
+    $("#ServiceType").on("change", () => {
+        var service = $("#ServiceType").find(":selected").text();
+        if (service == 'شهادة') {
+            $("#ServicePostion").removeAttr("disabled")
+            $("#PrintDate").removeAttr("disabled")
+            $("#CardServicePostion").attr("disabled", "disabled")
+            $("#CardPrintDate").attr("disabled", "disabled")
+        }
+        else if (service == 'كارنيه') {
+            $("#CardServicePostion").removeAttr("disabled")
+            $("#CardPrintDate").removeAttr("disabled")
+            $("#ServicePostion").attr("disabled", "disabled")
+            $("#PrintDate").attr("disabled", "disabled")
+        }
+        else {
+            $("#ServicePostion").removeAttr("disabled")
+            $("#PrintDate").removeAttr("disabled")
+            $("#CardServicePostion").removeAttr("disabled")
+            $("#CardPrintDate").removeAttr("disabled")
+        }
+        debugger
+
+
+    });
+    $(document).ready(() => {
+        var service = $("#ServiceType").find(":selected").text();
+        if (service == 'شهادة') {
+            $("#ServicePostion").removeAttr("disabled")
+            $("#PrintDate").removeAttr("disabled")
+            $("#CardServicePostion").attr("disabled", "disabled")
+            $("#CardPrintDate").attr("disabled", "disabled")
+        }
+        else if (service == 'كارنيه') {
+            $("#CardServicePostion").removeAttr("disabled")
+            $("#CardPrintDate").removeAttr("disabled")
+            $("#ServicePostion").attr("disabled", "disabled")
+            $("#PrintDate").attr("disabled", "disabled")
+        }
+        else {
+            $("#ServicePostion").removeAttr("disabled")
+            $("#PrintDate").removeAttr("disabled")
+            $("#CardServicePostion").removeAttr("disabled")
+            $("#CardPrintDate").removeAttr("disabled")
+        }
+
+
+        //var area = $('#PrintAreaID').find(":selected").text().trim().replace('وتعبئة ', '');
+
+        //var listAreas = $.ajax({
+        //    type: "GET",
+        //    url: "/Talab/RecievedAreas",
+        //    data: { areaName: area },
+        //    dataType: "json",
+        //    success: function (areaList) {
+        //        recivedList = $("#RecievedAreaID").empty()
+        //        debugger
+        //        for (var i = 0; i < areaList.length; i++) {
+        //            if (areaList[i].Name.includes('إدارة') || areaList[i].Name.includes('قسم') || areaList[i].Name.includes('منطقة') || areaList[i].Name.includes('مكتب')) {
+        //                recivedList.append($('<option></option>').val(areaList[i].MktbCode).html(areaList[i].Name));
+        //            }
+
+        //        }
+        //    }
+        //});
+
+    })
+</script>
